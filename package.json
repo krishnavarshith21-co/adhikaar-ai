@@ -1,37 +1,26 @@
 {
-  "name": "adhikaar",
+  "name": "adhikaar-monorepo",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "typecheck": "tsc --noEmit",
-    "test": "node scripts/test-domain.mjs",
-    "test:api": "node --test tests/api.test.mjs",
-    "test:nav": "node --test tests/navigation.test.mjs",
-    "test:speech": "node scripts/test-domain.mjs --speech-only"
-  },
-  "dependencies": {
-    "@react-three/fiber": "^9.8.2",
-    "lucide-react": "^1.77.0",
-    "motion": "^14.14.0",
-    "next": "16.4.6",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "three": "^0.187.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/turbopack": "4.3.3",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@types/three": "^0.187.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.4.6",
-    "tailwindcss": "4.3.3",
-    "typescript": "^5",
-    "ws": "^8.23.0"
+    "dev": "npm run dev --workspace=@adhikaar/web",
+    "dev:web": "npm run dev --workspace=@adhikaar/web",
+    "dev:backend": "./apps/api/mvnw -f apps/api/pom.xml spring-boot:run",
+    "build": "npm run build --workspace=@adhikaar/web",
+    "build:web": "npm run build --workspace=@adhikaar/web",
+    "build:backend": "./apps/api/mvnw -f apps/api/pom.xml package -DskipTests",
+    "start": "npm run start --workspace=@adhikaar/web",
+    "lint": "npm run lint --workspace=@adhikaar/web",
+    "typecheck": "npm run typecheck --workspace=@adhikaar/web",
+    "test": "npm run test --workspace=@adhikaar/web",
+    "test:web": "npm run test --workspace=@adhikaar/web",
+    "test:api": "npm run test:api --workspace=@adhikaar/web",
+    "test:nav": "npm run test:nav --workspace=@adhikaar/web",
+    "test:speech": "npm run test:speech --workspace=@adhikaar/web",
+    "test:backend": "./apps/api/mvnw -f apps/api/pom.xml test"
   }
 }

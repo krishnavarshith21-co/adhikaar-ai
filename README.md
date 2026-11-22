@@ -142,7 +142,7 @@ flowchart TD
         ThreeCanvas["Three.js 3D Heritage Showcase"]
     end
 
-    subgraph EdgeTier["Next.js 16 Web & API Layer (:3000)"]
+    subgraph EdgeTier["Next.js 16 Web & API Layer - apps/web (:3000)"]
         Proxy["Next.js Proxy Router (src/proxy.ts)"]
         SSR["React 19 Server Components / App Router"]
         DemoStore["Bounded Demo Session Store (In-Memory)"]
@@ -151,7 +151,7 @@ flowchart TD
         SpeechProxy["Speech Normalization Proxy (/api/assistant/speech)"]
     end
 
-    subgraph BackendTier["Spring Boot 3.5 Services Layer (:8080)"]
+    subgraph BackendTier["Spring Boot 3.5 Services Layer - apps/api (:8080)"]
         Security["Spring Security (BCrypt / Bearer Tokens)"]
         AuthCtrl["AuthController (/api/v1/auth)"]
         WorkspaceCtrl["WorkspaceController (/api/v1/workspace)"]
@@ -357,7 +357,8 @@ docker compose up -d postgres
 
 # 2. Run Flyway migrations & start Spring Boot backend
 export DB_PASSWORD=adhikaar_secure_password
-./backend/mvnw -f backend/pom.xml spring-boot:run
+npm run dev:backend
+# Or directly: ./apps/api/mvnw -f apps/api/pom.xml spring-boot:run
 
 # 3. In a separate terminal, start Next.js frontend
 npm run dev
@@ -430,7 +431,8 @@ npm run test:api
 npm run test:nav
 
 # 6. Execute Spring Boot backend unit and integration tests
-./backend/mvnw -f backend/pom.xml test
+npm run test:backend
+# Or directly: ./apps/api/mvnw -f apps/api/pom.xml test
 
 # 7. Compile and verify complete Next.js production build (37 static pages)
 npm run build
@@ -464,74 +466,112 @@ ADHIKAAR AI adheres to strict civic data protection principles:
 
 ```text
 codebenders/
-├── .env.example                     # Reference environment variables
-├── docker-compose.yml               # Local PostgreSQL 16 container definition
-├── next.config.ts                   # Next.js 16 configuration & instant insight gates
-├── package.json                     # Frontend dependencies & automation scripts
-├── tsconfig.json                    # Strict TypeScript configuration
+├── .editorconfig                    # Consistent cross-editor coding standards
+├── .env.example                     # Root reference environment template
+├── .gitignore                       # Monorepo-aware Git exclusion rules
+├── docker-compose.yml               # Multi-container orchestration (PostgreSQL + API)
+├── package.json                     # Monorepo workspace root (npm workspaces)
+├── README.md                        # Master repository documentation
 │
-├── backend/                         # Java / Spring Boot 3.5 Services Tier
-│   ├── pom.xml                      # Maven project configuration & dependencies
-│   ├── mvnw / mvnw.cmd              # Maven wrapper executables
-│   └── src/
-│       ├── main/
-│       │   ├── java/com/adhikaarai/backend/
-│       │   │   ├── AdhikaarBackendApplication.java
-│       │   │   ├── assistant/       # AI Assistant Spring integration service
-│       │   │   ├── config/          # Spring Security, CORS & WebMvc configuration
-│       │   │   ├── controller/      # REST API Controllers (Auth, Workspace, Schemes)
-│       │   │   ├── dto/             # Request & response data transfer objects
-│       │   │   ├── entity/          # JPA Hibernate entities (Users, Journeys, Schemes)
-│       │   │   ├── repository/      # Spring Data JPA repositories
-│       │   │   ├── rules/           # Java DeterministicEligibilityEngine.java
-│       │   │   └── service/         # Core application & session services
-│       │   └── resources/
-│       │       ├── application.yml  # Application properties & Actuator configuration
-│       │       └── db/migration/    # Flyway database migrations (V1, V2, V3)
-│       └── test/                    # Spring Boot JUnit 5 integration test suites
+├── .github/                         # GitHub repository configuration
+│   ├── ISSUE_TEMPLATE/              # Structured bug reports & feature requests
+│   └── workflows/                   # Automated CI pipelines (Web & Java tests)
 │
-├── src/                             # Next.js 16 Frontend & Edge Tier
-│   ├── proxy.ts                     # Authentication & session routing proxy
-│   ├── app/                         # Next.js App Router directory
-│   │   ├── (auth)/                  # Sign-in and registration pages
-│   │   ├── (public)/                # Public catalogue & scheme detail pages
-│   │   ├── api/                     # Server-side API routes (assistant, speech, auth)
-│   │   ├── app/                     # Authenticated Citizen Workspace
-│   │   │   ├── assistant/           # AI Civic Guide conversational view
-│   │   │   ├── discover/            # Scheme discovery & filter view
-│   │   │   ├── eligibility/         # Interactive eligibility check view
-│   │   │   ├── help/                # Help, trust & FAQ view
-│   │   │   ├── journey/             # Application journey tracking view
-│   │   │   ├── notifications/       # User notifications & alert center
-│   │   │   ├── preflight/           # Application Preflight document audit view
-│   │   │   ├── profile/             # Citizen profile management view
-│   │   │   ├── saved/               # Bookmarked schemes view
-│   │   │   └── settings/            # Citizen workspace settings view
-│   │   ├── globals.css              # Tailwind CSS 4 theme tokens & styles
-│   │   └── layout.tsx               # Root application layout & font loader
-│   ├── components/                  # Reusable UI component library
-│   │   ├── assistant/               # Chat dialog & audio recording components
-│   │   ├── demo/                    # Demo mode banner & persona switcher
-│   │   ├── home/                    # Landing page hero, search & benefits sections
-│   │   ├── layout/                  # Main header, footer & sidebar navigation
-│   │   ├── three/                   # Three.js 3D Heritage Showcase canvas
-│   │   └── ui/                      # Base UI primitives (buttons, cards, badges)
-│   └── lib/                         # Core domain logic & shared utilities
-│       ├── auth-context.tsx         # Client-side authentication context
-│       ├── language-context.tsx     # Multilingual state & translation mappings
-│       ├── domain/                  # Catalog, eligibility engine, & demo fixtures
-│       └── server/                  # Demo session store & bearer session adapters
+├── apps/
+│   ├── web/                         # Next.js 16 Web Application Tier
+│   │   ├── .env.example             # Web application environment template
+│   │   ├── eslint.config.mjs        # Next.js ESLint configuration
+│   │   ├── next.config.ts           # Next.js 16 configuration & instant insight gates
+│   │   ├── package.json             # Web dependencies (@adhikaar/web)
+│   │   ├── tsconfig.json            # TypeScript configuration (paths: @/* -> ./src/*)
+│   │   ├── public/                  # Static assets & high-resolution imagery
+│   │   │   └── images/              # Preserved architectural photographs (landing-archway-hq.jpg)
+│   │   ├── scripts/                 # Web test runners & QA automation scripts
+│   │   ├── tests/                   # API, navigation, speech, and origin test suites
+│   │   └── src/
+│   │       ├── proxy.ts             # Next.js 16 proxy routing gate
+│   │       ├── app/                 # Next.js 16 App Router (routes, layouts, API endpoints)
+│   │       │   ├── (auth)/          # Sign-in, sign-up & password recovery
+│   │       │   ├── (public)/        # Public landing, about, terms & privacy
+│   │       │   ├── api/             # Server API routes (assistant, speech, auth, demo)
+│   │       │   └── app/             # Authenticated Citizen Workspace
+│   │       │       ├── assistant/   # AI Civic Guide conversational view
+│   │       │       ├── discover/    # Scheme discovery & filtering
+│   │       │       ├── eligibility/ # Interactive eligibility audit
+│   │       │       ├── help/        # Help, trust & FAQ
+│   │       │       ├── journey/     # Application journey tracking
+│   │       │       ├── notifications/ # User notifications center
+│   │       │       ├── preflight/   # Preflight document readiness
+│   │       │       ├── profile/     # Citizen profile management
+│   │       │       ├── saved/       # Bookmarked schemes
+│   │       │       ├── schemes/[id] # Scheme detail views
+│   │       │       └── settings/    # Workspace settings
+│   │       ├── components/          # Reusable component library
+│   │       │   ├── assistant/       # Conversational dialog & voice review
+│   │       │   ├── auth/            # Authentication shells & split layouts
+│   │       │   ├── demo/            # Demo banner & persona switcher
+│   │       │   ├── home/            # Landing page sections & preflight cards
+│   │       │   ├── layout/          # Navigation bars, topbar & sidebar
+│   │       │   ├── three/           # Three.js 3D heritage model & canvas
+│   │       │   ├── ui/              # Primitive design system (button, card, badge)
+│   │       │   └── workspace/       # Workspace state gates
+│   │       ├── features/            # Feature-sliced modules
+│   │       │   ├── assistant/       # Assistant & voice pipeline features
+│   │       │   ├── authentication/  # Auth features & hooks
+│   │       │   ├── dashboard/       # Dashboard widgets & state
+│   │       │   ├── discovery/       # Scheme search & catalogue
+│   │       │   ├── eligibility/     # Deterministic evaluation rules
+│   │       │   ├── journeys/        # Milestone & progress tracking
+│   │       │   ├── notifications/   # System alerts & updates
+│   │       │   ├── preflight/       # Document audit checklists
+│   │       │   ├── profile/         # User profile & synthetic personas
+│   │       │   └── settings/        # Preferences & configuration
+│   │       └── lib/                 # Core domain logic & server utilities
+│   │           ├── domain/          # Catalog, eligibility, demo fixtures, speech audio
+│   │           └── server/          # AI providers, demo session store, transcription
+│   │
+│   └── api/                         # Java Spring Boot 3.5 Backend Tier
+│       ├── .env.example             # Backend environment template
+│       ├── .gitignore               # Maven & Java exclusion rules
+│       ├── Dockerfile               # Production container definition
+│       ├── mvnw / mvnw.cmd          # Maven wrapper executables
+│       ├── pom.xml                  # Maven POM (Spring Boot 3.5, Java 21)
+│       └── src/
+│           ├── main/
+│           │   ├── java/com/adhikaarai/backend/
+│           │   │   ├── AdhikaarBackendApplication.java
+│           │   │   ├── assistant/   # AI Assistant Spring integration service
+│           │   │   ├── config/      # Spring Security & WebMvc configuration
+│           │   │   ├── controller/  # REST API Controllers (Auth, Workspace, Schemes)
+│           │   │   ├── dto/         # Request & response data transfer objects
+│           │   │   ├── entity/      # JPA Hibernate entities
+│           │   │   ├── repository/  # Spring Data JPA repositories
+│           │   │   ├── rules/       # Java DeterministicEligibilityEngine.java
+│           │   │   └── service/     # Core application services
+│           │   └── resources/
+│           │       ├── application.yml # Spring properties & Actuator probes
+│           │       └── db/migration/   # Flyway migrations (V1, V2, V3)
+│           └── test/                # Spring Boot JUnit 5 test suites
 │
-├── public/                          # Static assets, SVG icons & high-res images
-│   └── images/                      # Preserved architectural photographs
-├── tests/                           # Integration test suites (API, navigation, proxy)
-├── scripts/                         # Domain rule test runner & audit automation
-└── docs/                            # In-depth architectural & audit documentation
-    ├── AUDIT-2026-11-22.md          # Comprehensive technical audit log
-    ├── DEMO-LOGIN-FIX.md            # Demo authentication & routing audit
-    ├── HERITAGE-3D.md               # 3D heritage model specification
-    ├── QA.md                        # Quality assurance report
-    └── SPEECH-PIPELINE.md           # Speech-to-text normalization documentation
+├── packages/
+│   └── shared/                      # Shared contracts, types & schemas
+│       └── README.md                # Shared contract documentation
+│
+├── infra/
+│   ├── database/                    # Database documentation & migration guides
+│   └── docker/                      # Multi-service Docker Compose definitions
+│
+├── docs/                            # Categorized architectural & audit documentation
+│   ├── architecture/                # System architecture & 3D heritage model
+│   ├── api/                         # REST API specifications & endpoints
+│   ├── development/                 # Dev guide, demo mode & speech pipeline
+│   ├── deployment/                  # Docker & production deployment
+│   └── testing/                     # QA test plans & audit verification logs
+│
+└── scripts/                         # Monorepo convenience shell scripts
+    ├── build.sh                     # Monorepo full build runner
+    ├── dev.sh                       # Local development launcher
+    └── test.sh                      # Complete automated test runner
 ```
 
 ---

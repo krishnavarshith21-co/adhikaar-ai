@@ -31,6 +31,10 @@ export function AuthSplitShell({
     }
   }, [isAuthenticated, router]);
 
+  if (isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden flex flex-col justify-between bg-[#0F1E2E]">
       {/* ================================================================= */}
@@ -137,7 +141,7 @@ export function AuthSplitShell({
             className="hidden sm:inline-flex items-center gap-1.5 text-xs sm:text-sm font-sans font-medium text-[#172943] hover:text-[#BC9059] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#BC9059] rounded-sm"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>{t.auth.backToHome}</span>
+            <span>{t?.auth?.backToHome ?? "Back to home"}</span>
           </Link>
         </div>
       </header>
@@ -172,7 +176,7 @@ export function AuthSplitShell({
           {/* Poetic Civic Badge floating over lower floor */}
           <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-[#172943]/70 backdrop-blur-md border border-[#BC9059]/40 text-xs font-sans text-[#E2ECF5] shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
             <Shield className="w-3.5 h-3.5 text-[#DFBE8F] shrink-0" />
-            <span>{t.auth.independentPlatform}</span>
+            <span>{t?.auth?.independentPlatform ?? "An independent civic guidance platform"}</span>
           </div>
         </div>
       </main>
@@ -184,11 +188,11 @@ export function AuthSplitShell({
         <span>© 2026 ADHIKAAR AI. Pan-India Civic Intelligence.</span>
         <div className="flex items-center gap-4">
           <Link href="/privacy" className="hover:text-[#DFBE8F] transition-colors">
-            {t.footer.privacy}
+            {t?.footer?.privacy ?? "Privacy"}
           </Link>
           <span>•</span>
           <Link href="/terms" className="hover:text-[#DFBE8F] transition-colors">
-            {t.footer.terms}
+            {t?.footer?.terms ?? "Terms"}
           </Link>
         </div>
       </footer>

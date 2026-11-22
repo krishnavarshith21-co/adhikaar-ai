@@ -9,7 +9,8 @@ process.loadEnvFile('.env.local');
 const build=mkdtempSync(join(tmpdir(),'adhikaar-ai-audit-'));
 const results=[];await fs.mkdir('.qa-artifacts/audit',{recursive:true});
 try {
- const c=spawnSync(process.execPath,['node_modules/typescript/bin/tsc','--module','commonjs','--target','es2022','--esModuleInterop','--skipLibCheck','--outDir',build,'src/lib/server/ai-provider.ts','src/lib/server/transcription.ts'],{stdio:'inherit'});if(c.status)throw Error('Compilation failed');
+ const tscPath=createRequire(import.meta.url).resolve('typescript/bin/tsc');
+ const c=spawnSync(process.execPath,[tscPath,'--module','commonjs','--target','es2022','--esModuleInterop','--skipLibCheck','--outDir',build,'src/lib/server/ai-provider.ts','src/lib/server/transcription.ts'],{stdio:'inherit'});if(c.status)throw Error('Compilation failed');
  const require=createRequire(import.meta.url);const provider=require(join(build,'server/ai-provider.js'));const {transcribeAudio}=require(join(build,'server/transcription.js'));
  const config=provider.getAiConfig();console.log('Configured provider:',config.provider,'chat:',config.chatModel,'speech:',config.ttsModel);
  if(!config.apiKey)throw Error('No configured provider key');

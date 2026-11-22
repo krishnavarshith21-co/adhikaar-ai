@@ -17,28 +17,19 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "paths": {
       "@/*": [
+        "./apps/web/src/*",
         "./src/*"
       ]
     }
   },
   "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts",
-    ".next-audit/types/**/*.ts",
-    ".next-audit/dev/types/**/*.ts"
+    "apps/web/src/**/*",
+    "src/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "apps/web/node_modules"
   ]
 }
