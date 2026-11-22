@@ -1,0 +1,18 @@
+'use client';
+import Link from 'next/link';
+import { FileCheck2, Bookmark, Route, Compass, MessagesSquare } from 'lucide-react';
+import { useAuth } from '@/lib/auth-context';
+import { metrics, recommendations } from '@/lib/domain/eligibility';
+import { schemeById } from '@/lib/domain/catalog';
+import { Empty, SchemeCard } from '@/components/workspace/common';
+export default function DashboardPage() {
+  const { session, isDemoUser } = useAuth(); if (!session) return null;
+  const { workspace } = session; const counts = metrics(workspace), matches = recommendations(workspace.profile);
+  const topMatch = matches[0];
+  const preflightHref = topMatch ? `/app/preflight?scheme=${topMatch.id}` : '/app/preflight';
+  return <div className="page-stack"><section className="welcome-panel"><div><p className="eyebrow">A clearer path to public support</p><h1>Welcome, {workspace.profile.name.split(' ')[0]}.</h1><p>{counts.matches} potentially matching {counts.matches === 1 ? 'programme' : 'programmes'}, based on your profile. Let’s prepare your next step with care.</p><div className="flex flex-wrap gap-3 mt-6"><Link className="action-link gold" href="/app/discover">Explore programmes</Link><Link className="action-link light-outline" href="/app/assistant"><MessagesSquare size={18} />Ask ADHIKAAR Guide</Link></div></div><div className="welcome-aside"><span className="eyebrow">Your profile</span><strong>{workspace.profile.occupation || 'Let’s get acquainted'}</strong><span>{workspace.profile.state || 'Add your state'}</span><Link href="/app/profile">Review profile</Link></div></section>
+    <section className="metric-grid" aria-label="Workspace summary">{[{ label: 'Potential matches', value: counts.matches, icon: Compass, href: '/app/eligibility' }, { label: 'Document readiness', value: `${counts.readiness}%`, icon: FileCheck2, href: preflightHref }, { label: 'Active journeys', value: counts.journeys, icon: Route, href: '/app/journey' }, { label: 'Saved programmes', value: counts.saved, icon: Bookmark, href: '/app/saved' }].map(({ label,value,icon: Icon,href }) => <Link className="surface metric" key={label} href={href}><Icon size={21} /><span>{label}</span><strong>{value}</strong></Link>)}</section>
+    <p className="metadata">Readiness: {counts.ready} of {counts.documents} preparation items across potential matches, marked by you. Eligibility is preliminary, never official approval.</p>
+    <div className="dashboard-columns"><section><div className="section-heading"><h2>Selected for your profile</h2><Link href="/app/discover">View catalogue</Link></div><div className="grid gap-5">{matches.map(s => <SchemeCard key={s.id} scheme={s} />)}{!matches.length && <Empty title="Start with your profile">Complete your profile to find potential matches.</Empty>}</div></section><aside className="space-y-5"><div className="surface p-6"><p className="eyebrow">Your next step</p><h2>Preparation brings clarity.</h2><p className="muted mt-3">Review the documents for your chosen programme. Your checklist is a preparation aid and does not verify documents with the government.</p><Link className="action-link mt-5" href={preflightHref}>Open Preflight</Link></div><div className="surface p-6"><h2>Your journeys</h2>{workspace.journeys.length ? workspace.journeys.map(j => <div key={j.schemeId} className="journey-preview"><span className="metadata">{isDemoUser ? 'Demo — illustrative' : 'Personal preparation'}</span><h3>{schemeById(j.schemeId)?.name}</h3><p className="muted">{j.stage === 3 ? 'Preparation complete' : 'Preparation in progress'}</p></div>) : <p className="muted mt-3">No journeys yet. Choose a programme to begin.</p>}<Link className="text-link" href="/app/journey">View your timeline</Link></div></aside></div>
+  </div>;
+}

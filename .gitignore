@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Java and QA build output
+backend/target/
+.qa-artifacts/
+.codebenders/
+
+!.env.example
+
+/.next-audit/
+/.qa-audit-dependencies.json
