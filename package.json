@@ -7,13 +7,13 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev apps/web",
     "dev:web": "npm run dev --workspace=@adhikaar/web",
     "dev:backend": "./apps/api/mvnw -f apps/api/pom.xml spring-boot:run",
-    "build": "next build",
+    "build": "next build apps/web",
     "build:web": "npm run build --workspace=@adhikaar/web",
     "build:backend": "./apps/api/mvnw -f apps/api/pom.xml package -DskipTests",
-    "start": "next start",
+    "start": "next start apps/web",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "npm run test --workspace=@adhikaar/web",
